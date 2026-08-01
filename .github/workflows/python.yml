@@ -1,16 +1,13 @@
-name: Python Health Monitor CI
+name: Python CI
 
 on:
   push:
-    branches:
-      - main
-
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
-  run-health-monitor:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,12 +17,19 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.12"
 
       - name: Install Dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest flake8
 
-      - name: Run Health Monitor
-        run: |
-          python health_monitor.py
+      - name: Run flake8
+        run: flake8 health_monitor.py
+
+      - name: Run pytest
+        run: python -m pytest
+
+      - name: Build Docker Image
+        run: docker build -t linux-health-monitor .
