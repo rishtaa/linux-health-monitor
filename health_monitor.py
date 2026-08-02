@@ -1,34 +1,37 @@
-import psutil
 import datetime
 import platform
 
-cpu= psutil.cpu_percent(interval=1)
-memory=psutil.virtual_memory()
-disk=psutil.disk_usage('/')
+import psutil
 
-memory_percent=memory.percent
-memory_used=round(memory.used/(1024**3),2)
-memory_total=round(memory.total/(1024**3),2)
 
-disk_percent=disk.percent
-disk_used=round(disk.used/(1024**3),2)
-disk_total=round(disk.total/(1024**3),2)
-disk_free=round(disk.free/(1024**3),2)
+def generate_report():
+    cpu = psutil.cpu_percent(interval=1)
+    memory = psutil.virtual_memory()
+    disk = psutil.disk_usage("/")
 
-hostname = platform.node()
-os_name=platform.system()
-os_version=platform.release()
+    memory_percent = memory.percent
+    memory_used = round(memory.used / (1024**3), 2)
+    memory_total = round(memory.total / (1024**3), 2)
 
-if cpu > 80:
-   print("Warning:High CPU Usage!")
-if memory_percent > 80:
-   print("Warning:High Memory Usage!")
-if disk_percent > 80:
-   print("Warning:High Disk Usage!")
+    disk_percent = disk.percent
+    disk_used = round(disk.used / (1024**3), 2)
+    disk_total = round(disk.total / (1024**3), 2)
+    disk_free = round(disk.free / (1024**3), 2)
 
-time = datetime.datetime.now()
+    hostname = platform.node()
+    os_name = platform.system()
+    os_version = platform.release()
 
-report = f"""
+    if cpu > 80:
+        print("Warning: High CPU Usage!")
+    if memory_percent > 80:
+        print("Warning: High Memory Usage!")
+    if disk_percent > 80:
+        print("Warning: High Disk Usage!")
+
+    time = datetime.datetime.now()
+
+    report = f"""
 System Health Report
 -----------------------------
 Hostname: {hostname}
@@ -49,7 +52,11 @@ Disk Total: {disk_total} GB
 -----------------------------
 """
 
-print(report)
+    print(report)
 
-with open("health.log","a") as file:
-     file.write(report) 
+    with open("health.log", "a") as file:
+        file.write(report)
+
+
+if __name__ == "__main__":
+    generate_report()
